@@ -10,7 +10,11 @@
 // Instruktion, die dem Mailtext vorangestellt wird (frei anpassbar):
 var PROMPT_PREFIX =
   "Bitte entwirf eine passende Antwort auf die folgende E-Mail entsprechend meines Email-Skills. " +
-  "Antworte in der Sprache der E-Mail. Beachte alternativ exakt meine folgende Anweisung vor dem Hauptemailtext.\n\n---\n\n";
+  "Antworte in der Sprache der E-Mail. Beachte alternativ exakt meine folgende Anweisung nach dem Hauptemailtext.\n\n---\n\n";
+
+// Wird IMMER ans Ende angehaengt (auch bei gekuerzten Mails) - der Cursor auf
+// claude.ai landet darunter, dort kann direkt eine eigene Anweisung getippt werden:
+var PROMPT_SUFFIX = "\n\n----------\n\n";
 
 // Sicherheitslimit für die URL-Länge (Zeichen NACH dem URL-Encoding).
 // Browser/Server werden ab ~8.000 Zeichen unzuverlässig; 6.000 ist konservativ.
@@ -71,19 +75,23 @@ function buildHeader(item, callback) {
  * den Standardbrowser des Systems (nicht die Claude-App).
  */
 function openClaude(prompt) {
+  // Platz für den Suffix (Trennlinie) reservieren, damit er nie der Kürzung
+  // zum Opfer fällt und der Cursor immer unterhalb der Linie landet.
+  var encodedSuffix = encodeURIComponent(PROMPT_SUFFIX);
+  var maxBody = MAX_ENCODED_LEN - encodedSuffix.length;
   var encoded = encodeURIComponent(prompt);
 
-  if (encoded.length > MAX_ENCODED_LEN) {
+  if (encoded.length > maxBody) {
     // Rohtext schrittweise kürzen, bis die kodierte Länge passt.
     var raw = prompt;
-    while (encoded.length > MAX_ENCODED_LEN && raw.length > 0) {
-      var over = encoded.length - MAX_ENCODED_LEN;
+    while (encoded.length > maxBody && raw.length > 0) {
+      var over = encoded.length - maxBody;
       raw = raw.slice(0, raw.length - Math.max(50, Math.ceil(over / 3)));
       encoded = encodeURIComponent(raw + "\n\n[Text wurde wegen Längenbegrenzung gekürzt]");
     }
   }
 
-  window.open(CLAUDE_URL + encoded);
+  window.open(CLAUDE_URL + encoded + encodedSuffix);
 }
 
 /** Dezente Infoleiste in der Nachricht (kein blockierender Dialog). */
