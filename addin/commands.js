@@ -9,8 +9,8 @@
 
 // Instruktion, die dem Mailtext vorangestellt wird (frei anpassbar):
 var PROMPT_PREFIX =
-  "Bitte entwirf eine passende, Antwort auf die folgende E-Mail entsprechend meines Email-Skills " +
-  "Antworte in der Sprache der E-Mail. Beachte alternativ exakt meine folgende Anweisung vor dem Hauptemailtext\n\n---\n\n";
+  "Bitte entwirf eine passende Antwort auf die folgende E-Mail entsprechend meines Email-Skills. " +
+  "Antworte in der Sprache der E-Mail. Beachte alternativ exakt meine folgende Anweisung vor dem Hauptemailtext.\n\n---\n\n";
 
 // Sicherheitslimit für die URL-Länge (Zeichen NACH dem URL-Encoding).
 // Browser/Server werden ab ~8.000 Zeichen unzuverlässig; 6.000 ist konservativ.
