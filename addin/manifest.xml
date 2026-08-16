@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+  xsi:type="MailApp">
+
+  <!-- Eindeutige ID dieses Add-ins (bereits generiert, kann so bleiben) -->
+  <Id>80693f10-28f3-4d7a-a9e3-ff9a8f72ab83</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Privat</ProviderName>
+  <DefaultLocale>de-DE</DefaultLocale>
+  <DisplayName DefaultValue="Auto-Antwort" />
+  <Description DefaultValue="Öffnet claude.ai im Browser mit dem Volltext der Nachricht als vorbereitetem Prompt. Absenden erfolgt manuell." />
+
+  <IconUrl DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/assets/icon-80.png" />
+  <SupportUrl DefaultValue="https://github.com/putzfn/outlook-auto-antwort" />
+
+  <AppDomains>
+    <AppDomain>https://claude.ai</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox" />
+  </Hosts>
+
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.5" />
+    </Sets>
+  </Requirements>
+
+  <!-- Fallback für sehr alte Clients (wird von Outlook 2408 ignoriert, muss aber vorhanden sein) -->
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/commands.html" />
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <!-- ReadWriteItem = Minimum, um den Text auch im Compose-/Inline-Antwort-Modus lesen zu können.
+       Kein Postfachzugriff, kein Senden. -->
+  <Permissions>ReadWriteItem</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit" />
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.5">
+        <bt:Set Name="Mailbox" />
+      </bt:Sets>
+    </Requirements>
+
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <FunctionFile resid="Commands.Url" />
+
+          <!-- Button beim Lesen einer Nachricht (geöffnet oder im Lesebereich) -->
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="grpRead">
+                <Label resid="Group.Label" />
+                <Control xsi:type="Button" id="btnReadAutoAntwort">
+                  <Label resid="Btn.Label" />
+                  <Supertip>
+                    <Title resid="Btn.Label" />
+                    <Description resid="Btn.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16" />
+                    <bt:Image size="32" resid="Icon.32" />
+                    <bt:Image size="80" resid="Icon.80" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>autoAntwort</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+
+          <!-- Button beim Verfassen: neue Mail, Antwortfenster UND Inline-/angedockte Antwort -->
+          <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="grpCompose">
+                <Label resid="Group.Label" />
+                <Control xsi:type="Button" id="btnComposeAutoAntwort">
+                  <Label resid="Btn.Label" />
+                  <Supertip>
+                    <Title resid="Btn.Label" />
+                    <Description resid="Btn.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16" />
+                    <bt:Image size="32" resid="Icon.32" />
+                    <bt:Image size="80" resid="Icon.80" />
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>autoAntwort</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16" DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/assets/icon-16.png" />
+        <bt:Image id="Icon.32" DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/assets/icon-32.png" />
+        <bt:Image id="Icon.80" DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/assets/icon-80.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://putzfn.github.io/outlook-auto-antwort/addin/commands.html" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="Group.Label" DefaultValue="Claude" />
+        <bt:String id="Btn.Label" DefaultValue="Auto-Antwort" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="Btn.Tooltip" DefaultValue="Öffnet claude.ai im Browser mit dem Nachrichtentext als vorbereitetem Prompt. Es wird nichts automatisch gesendet." />
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

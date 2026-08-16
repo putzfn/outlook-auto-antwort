@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Papierflieger "Auto-Antwort" – Vektorquelle für die PNG-Icons -->
+  <polygon points="95,5 5,55 40,63 32,95 52,70"
+           fill="#D97757" stroke="#B85C3E" stroke-width="2" stroke-linejoin="round"/>
+  <polygon points="95,5 40,63 52,70" fill="#C4623F"/>
+</svg>
